@@ -1,0 +1,8 @@
+target/*
+.DS_Store
+*~
+*#
+.cargo
+
+data/store/fst/*
+data/store/kv/*

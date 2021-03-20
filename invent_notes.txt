@@ -1,0 +1,65 @@
+- start coding client woohoo - back to coding client with TDD
+	- make ingest and search channel
+		- init_command macro - and implement Command class 
+			- keep doing macro tutorial, damn my brain is spinning
+				https://blog.logrocket.com/macros-in-rust-a-tutorial-with-examples/
+				
+
+	- now what? back to this after
+		- tutorial with algolia
+		- tutorial with meilisearch
+
+
+
+What's the goal?
+	- goal is to be able to explain and teach myself how to create a Rust library, Rust concepts, and some Sonic concepts
+		and then explain to others
+	- write some code (but once i understand everything , really no need to go till completion)
+		- New features to add 
+			- async load
+			- test with sonic server - this would be an integration test
+		- and then write about the concepts and how to do it as well , this is NEW code, most learning happens here
+
+Client lib journal Rust
+	- see the official code, there's no main.rs? cargo new lib
+		- lib.rs: - just basically imports macroses and mods and unit test
+	- Macro std::compile_error
+	- macro_use attribute
+	- pub mod 
+	- pub use 
+	- cfg test - integration tests - unit tests
+	- i find it hard to just write code without verifying it right away, let's do TDD
+	- lifetime annotation - if no annotation then get error
+	- how TCP connection works, and how to write test stub for this?
+		- great for education
+		- Result can only be used for function with ? calls
+		- tcpstream rust doc
+		- ?Sized ? relax size constraint
+			- generic lifetime and trait stuff
+			- never use &str as part of a struct, use String instead, make sure to 
+				convert to_string()
+			- avoid using &str as function argument, need to implement Sized trait
+				- use ToString?
+		- need to import mods inside lib.rs for it to register
+			- put mod search in mod, and then pub use to export it
+	- make ingest and search channel, make Channel is parent, to share connect method 
+		- because i'm returning a Result, not the actual SonicStream, is that 
+			why i can't call a method using this object?
+			- in the github , he calls it just fine
+			- need to unwrap the result by ?, expect or unwrap, nice
+	- to import the crate:result, do it in the mod test scope
+	- to impl function for the class and not the trait 
+	- Rust macros , fuckgin weird
+		- declarative and procedural macros - no idea what this means 
+		- declarative macros provide a match like an interface where 
+			on match the macro is replaced with code inside the matched arm 
+		- it's available everywhere in the code, don't have to do imports to use it
+		- need to import the macro rs in lib mod macroses
+		- the macro doesn't add two numbers, it just replaces itself 
+			with the code to add 2 numbers
+		- can be multiple branches in a single macro expanding to different code	
+			based on different arguments. Each branch can take multiple arguments,
+			starting with the $sign and followed by a token type 
+		
+=> I'm worrying about the format and how i can put this together so people can understand, yea schedule some time to 
+decide the format for this
