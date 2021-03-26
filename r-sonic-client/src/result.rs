@@ -24,6 +24,8 @@ pub enum ErrorKind {
     ConnectToServer,
     WriteStream,
     ReadStream,
+    WrongSonicResponse,
+    SwitchMode
 }
 
 impl fmt::Display for Error {
@@ -31,7 +33,9 @@ impl fmt::Display for Error {
         match self.kind {
             ErrorKind::ConnectToServer => write!(f, "{}", "Can not connect to Sonic server"),
             ErrorKind::WriteStream => write!(f, "{}", "Can not write to stream"),
-            ErrorKind::ReadStream => write!(f, "{}", "Can not read from stream")
+            ErrorKind::ReadStream => write!(f, "{}", "Can not read from stream"),
+            ErrorKind::WrongSonicResponse => write!(f, "{}", "Wrong Sonic response for command"),
+            ErrorKind::SwitchMode => write!(f, "{}", "wrong mode"),
         }
     }
 }

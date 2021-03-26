@@ -56,7 +56,7 @@
   new_table_reader_for_compaction_inputs=false
   skip_checking_sst_file_sizes_on_db_open=false
   skip_stats_update_on_db_open=false
-  wal_dir=./data/store/kv/f09baad9
+  wal_dir=/home/dai/Desktop/learn_rust/sonic_client/rust_c/data/store/kv/f09baad9
   random_access_max_buffer_size=1048576
   skip_log_error_on_recovery=false
   paranoid_checks=true
@@ -70,7 +70,7 @@
   allow_2pc=false
   use_direct_io_for_flush_and_compaction=false
   manual_wal_flush=false
-  max_open_files=-1
+  max_open_files=100
   max_background_flushes=-1
   enable_write_thread_adaptive_yield=true
   stats_history_buffer_size=1048576
@@ -98,7 +98,7 @@
   comparator=leveldb.BytewiseComparator
   compaction_options_universal={stop_style=kCompactionStopStyleTotalSize;compression_size_percent=-1;allow_trivial_move=false;max_merge_width=4294967295;max_size_amplification_percent=200;min_merge_width=2;size_ratio=1;}
   bottommost_compression=kDisableCompressionOption
-  compression=kSnappyCompression
+  compression=kZSTD
   compaction_filter_factory=nullptr
   max_sequential_skip_in_iterations=8
   max_bytes_for_level_multiplier_additional=1:{1}:{1}:{1}:{1}:{1}:{1}
@@ -127,10 +127,10 @@
   max_write_buffer_number=2
   optimize_filters_for_hits=false
   memtable_whole_key_filtering=false
-  arena_block_size=8388608
+  arena_block_size=2097152
   inplace_update_support=false
   target_file_size_base=67108864
-  write_buffer_size=67108864
+  write_buffer_size=16777216
   max_bytes_for_level_multiplier=10.000000
   disable_auto_compactions=false
   prefix_extractor=nullptr

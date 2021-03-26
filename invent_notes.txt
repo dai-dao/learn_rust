@@ -1,13 +1,19 @@
+=> Mindmap link 
+	- https://miro.com/app/board/o9J_lPRDX3A=/
+
+
 - start coding client woohoo - back to coding client with TDD
 	- make ingest and search channel
-		- init_command macro - and implement Command class 
-			- keep doing macro tutorial, damn my brain is spinning
-				https://blog.logrocket.com/macros-in-rust-a-tutorial-with-examples/
-				
+		- continue with precedural macros
+			https://blog.logrocket.com/macros-in-rust-a-tutorial-with-examples/
+		- what is ..Default::default()? in marco? come back later
+		- 
 
-	- now what? back to this after
-		- tutorial with algolia
-		- tutorial with meilisearch
+=> FINISH this tutorial project after implementing flush and ping and done
+
+=> now what? back to this after
+	- tutorial with algolia
+	- tutorial with meilisearch
 
 
 
@@ -19,6 +25,8 @@ What's the goal?
 			- async load
 			- test with sonic server - this would be an integration test
 		- and then write about the concepts and how to do it as well , this is NEW code, most learning happens here
+		- new tools even that solve problems that people complain about online
+
 
 Client lib journal Rust
 	- see the official code, there's no main.rs? cargo new lib
@@ -53,13 +61,31 @@ Client lib journal Rust
 		- declarative and procedural macros - no idea what this means 
 		- declarative macros provide a match like an interface where 
 			on match the macro is replaced with code inside the matched arm 
-		- it's available everywhere in the code, don't have to do imports to use it
-		- need to import the macro rs in lib mod macroses
-		- the macro doesn't add two numbers, it just replaces itself 
-			with the code to add 2 numbers
-		- can be multiple branches in a single macro expanding to different code	
-			based on different arguments. Each branch can take multiple arguments,
-			starting with the $sign and followed by a token type 
-		
+			- it's available everywhere in the code, don't have to do imports to use it
+			- need to import the macro rs in lib mod macroses
+			- the macro doesn't add two numbers, it just replaces itself 
+				with the code to add 2 numbers
+			- can be multiple branches in a single macro expanding to different code	
+				based on different arguments. Each branch can take multiple arguments,
+				starting with the $sign and followed by a token type 
+			- the ? in macro is for optional https://internals.rust-lang.org/t/pre-rfc-at-most-one-repetition-macro-patterns/6557
+
+		- procedural macros allow you to expand the existing syntax of Rust. it takes 
+			arbitrary input and returns valid Rust code 
+		- trait cannot be made into an object for function signature
+			- use trait signature instead
+			- derive debug can only apply to struct enum and unions	
+		- why lazy static?
+			- create global immutable variables which are 
+			initialized at runtime
+				- vars are initialized lazily (on demand). every time attempt to 
+					access the variable, there is a check to make sure the var is initialized
+				- global state tends to lead to messy code, since when it's large, difficult to find where it is initialized
+					and when 
+			- need to be imported from lib.rs to use , just like a macro 
+		- ooh rust with webassembly and javascript
+		- Rust security model
+		- if a struct takes arbitrary string as argument, need to specify 
+			lifetime parameter
 => I'm worrying about the format and how i can put this together so people can understand, yea schedule some time to 
 decide the format for this
