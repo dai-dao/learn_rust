@@ -1,20 +1,17 @@
-=> Mindmap link 
-	- https://miro.com/app/board/o9J_lPRDX3A=/
 
 
-- start coding client woohoo - back to coding client with TDD
-	- make ingest and search channel
-		- continue with precedural macros
-			https://blog.logrocket.com/macros-in-rust-a-tutorial-with-examples/
-		- what is ..Default::default()? in marco? come back later
-		- 
+- continue with precedural macros
+	https://blog.logrocket.com/macros-in-rust-a-tutorial-with-examples/
 
-=> FINISH this tutorial project after implementing flush and ping and done
 
 => now what? back to this after
+	- some reflect, identify next problem to solve, and do 
+		- NO high expectations for problems like oh yea out of this world and makes me feel 
+		flow all the time and shit, it's simply a problem that if some one needs solving, i'll be
+		there to help
 	- tutorial with algolia
+		- apply with analysis tasks
 	- tutorial with meilisearch
-
 
 
 What's the goal?
@@ -58,7 +55,7 @@ Client lib journal Rust
 	- to import the crate:result, do it in the mod test scope
 	- to impl function for the class and not the trait 
 	- Rust macros , fuckgin weird
-		- declarative and procedural macros - no idea what this means 
+		- declarative and procedural macros - no idea what this mea parameter is always self, which represents the instance 
 		- declarative macros provide a match like an interface where 
 			on match the macro is replaced with code inside the matched arm 
 			- it's available everywhere in the code, don't have to do imports to use it
@@ -85,7 +82,12 @@ Client lib journal Rust
 			- need to be imported from lib.rs to use , just like a macro 
 		- ooh rust with webassembly and javascript
 		- Rust security model
-		- if a struct takes arbitrary string as argument, need to specify 
+		- if a struct takes arbitrary string as generally more well usedargument, need to specify 
 			lifetime parameter
+		- design patterns and optional arguments, damn loads to write about
+			- optional arguments and using default, cool
+		- my custom macro will definitely be worth writing about, woohoo
+			- no way to define a function that takes variadic variables in Rust without a 
+			function signature
 => I'm worrying about the format and how i can put this together so people can understand, yea schedule some time to 
 decide the format for this

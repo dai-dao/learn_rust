@@ -3,21 +3,21 @@ use crate::result::*;
 
 
 #[derive(Debug, Default)]
-pub struct QuitCommand {
+pub struct PingCommand {
 
 }
 
 
-impl StreamCommand for QuitCommand {
+impl StreamCommand for PingCommand {
 
     type Response = bool;
 
     fn message(&self) -> String {
-        String::from("QUIT\r\n")
+        String::from("PING\r\n")
     }
 
     fn receive(&self, response: String) -> Result<Self::Response> {
-        if response.starts_with("ENDED ") {
+        if response == "PONG\r\n" {
             Ok(true)
         } else {
             Err(Error::new(ErrorKind::WrongSonicResponse))

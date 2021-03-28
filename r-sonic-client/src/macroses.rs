@@ -89,16 +89,29 @@ macro_rules! make_public {
 */
 
 
+macro_rules! init_channel_call {
+    // argument would be the list of allowable command, and that's it, or would be the Channel self
+    // macro can not create a function that takes arbitrary number of arguements, unless it's already specified
+    (
+        $a:expr
+    ) => {
+        pub fn callCmd(&mut self, ) -> Result<()>
+        {
+            dbg!("macro matched");
+            Ok(())
+        }
+    };
+}
+
+
 macro_rules! init_command {
     (
         // match meta data, zero or more
         $(#[$outer:meta])*
         use $cmd_name:ident 
-        // match zero or one life time param
+        // match zero or one life time param, and is optional
         for fn $function_name:ident $(<$($lt:lifetime)+>)? (
-            // match function arguments and argument types 
-            // i'll just make it super simple to start with
-            $($arg_name:ident : $arg_type:ty ,)*
+            $($arg_name:ident : $arg_type:ty $( => $arg_value:expr)? ,)*
         ) 
         $(;)?
     ) => {
@@ -106,8 +119,9 @@ macro_rules! init_command {
         pub fn $function_name $(<$($lt)+>)? (&mut self, $($arg_name:$arg_type,)*) 
             -> $crate::result::Result<<$cmd_name as $crate::commands::StreamCommand>::Response>
              {
-            // pass in arguments for the command function
-            let command = $cmd_name { $($arg_name,)* };
+            // the default is for missing arguments, as some functions can have variable arguments
+            // arg_name should be the same as field name from cmd_name struct, i see now
+            let command = $cmd_name { $($arg_name $(: $arg_value)? ,)* ..Default::default() };
             self.stream.run_command(command)
         }
     };

@@ -25,7 +25,8 @@ pub enum ErrorKind {
     WriteStream,
     ReadStream,
     WrongSonicResponse,
-    SwitchMode
+    SwitchMode,
+    QueryResponseError(&'static str),
 }
 
 impl fmt::Display for Error {
@@ -36,6 +37,9 @@ impl fmt::Display for Error {
             ErrorKind::ReadStream => write!(f, "{}", "Can not read from stream"),
             ErrorKind::WrongSonicResponse => write!(f, "{}", "Wrong Sonic response for command"),
             ErrorKind::SwitchMode => write!(f, "{}", "wrong mode"),
+            ErrorKind::QueryResponseError(message) => {
+                write!(f, "Error in query response: {}", message)
+            }
         }
     }
 }

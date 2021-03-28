@@ -16,6 +16,14 @@ impl Channel for SearchChannel {
     }
 }
 
+// const allow : Vec<&str> = vec!("quit", "ping");
+
 impl SearchChannel {
+
     init_command!( use QuitCommand for fn quit());
+}
+
+impl SearchChannel {
+    init_channel_call! ( 2);
+
 }

@@ -2,7 +2,7 @@ use super::{Channel, ChannelMode, SonicStream};
 use std::net::{ToSocketAddrs};
 use crate::result::Result;
 
-use crate::commands::{QuitCommand, PushCommand};
+use crate::commands::{QuitCommand, PushCommand, PingCommand, FlushCommand};
 
 
 #[derive(Debug)]
@@ -21,11 +21,17 @@ impl Channel for IngestChannel {
 
 
 impl IngestChannel {
+
     init_command!( use QuitCommand for fn quit());
     init_command!( use PushCommand for fn push<'a>(collection: &'a str, 
                                                 bucket: &'a str, 
                                                 obj_id: &'a str, 
                                                 content: &'a str,));
+    init_command!( use PingCommand for fn ping());
+
+    init_command!( use FlushCommand for fn flushc<'a>(collection: &'a str,));
+    init_command!( use FlushCommand for fn flushb<'a>(collection: &'a str, 
+                                                    bucket: &'a str => Some(bucket),));
 
     // pub fn test_macro() {
     //     println!("{:?}", add!(1,2));

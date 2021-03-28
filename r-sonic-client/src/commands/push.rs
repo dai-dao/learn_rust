@@ -2,7 +2,7 @@ use super::StreamCommand;
 use crate::result::*;
 
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct PushCommand<'a> {
     pub collection: &'a str, 
     pub bucket: &'a str, 

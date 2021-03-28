@@ -57,9 +57,27 @@ mod tests {
     fn test_ingest_query() -> Result<()> {
         let mut channel = IngestChannel::start("::1:1491", "SecretPassword")?;
         let pushed = channel.push("collection", "bucket", "object:1", "my really new good recipe")?;
-        assert_eq!(true, true);
+        assert_eq!(pushed, true);
         let out = channel.quit()?;
-        assert_eq!(true, true);
+        assert_eq!(out, true);
+        Ok(())
+    }
+
+    #[test]
+    fn test_ping() -> Result<()> {
+        let mut channel = IngestChannel::start("::1:1491", "SecretPassword")?;
+        let out = channel.ping()?;
+        assert_eq!(out, true);
+        Ok(())
+    }
+
+    #[test]
+    fn test_flush() -> Result<()> {
+        let mut channel = IngestChannel::start("::1:1491", "SecretPassword")?;
+        let flushb_count = channel.flushb("collection1", "bucket")?;
+        assert_eq!(flushb_count, 0);
+        let flushc_count = channel.flushc("collection1")?;
+        assert_eq!(flushc_count, 0);
         Ok(())
     }
 
@@ -67,4 +85,13 @@ mod tests {
     // fn test_macro() {
     //     IngestChannel::test_macro()
     // }
+
+    #[test]
+    fn test_call() -> Result<()> {
+        let mut channel = SearchChannel::start("::1:1491", "SecretPassword")?;
+        channel.callCmd();
+
+        // channel.callCmd();
+        Ok(())
+    }
 }
