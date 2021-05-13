@@ -1,16 +1,23 @@
+=> Weekend
+	- 
+
+
+
 => PLAN today 
-	- implement a way to visualize trie, to see the compressed trie, that's the 
-	best way to understand this 
-		- then try the benchmark example, yea this is cool, performance, so FUN and FREE
+	- Get the ElasticSearch source code and build
+		- contribute
+	
+	- 4:30, 30 min do a programming challenge, do stats or explore whatever
+		for FUN, build new Rust things
+
+	- Do 1 hour Pen-test course , FINISH all the way
 
 
-	- 1 hour study Vectra? and cyber use cases 
 
+=> INVENT schedule
+	- 6-9 AM: 
+		- Then 1 hour play with Meilisearch, look what people are asking for , 
+			play with ElasticSearch, CUDA, read Uber database, read ElasticSearch use 
+			cases for Cyber
+	- 7-8 PM: Study Cyber
 
-
-	- after work, solve one programming problem woohoo
-
-=> I wanna build something new, take the Meilisearch experimental search engine and re-build
-and make it better woohoo
-
-=> Also wanna schedule some time to learn about Rust internals
