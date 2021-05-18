@@ -1,16 +1,17 @@
 => next
-	- 
+	- what's next haha
 
 
 
 => PLAN today 
 	- Get the ElasticSearch source code and build
-		- contribute
+		- 
 	
 	- 4:30, 30 min do a programming challenge, do stats or explore whatever
 		for FUN, build new Rust things
 
 	- Do 1 hour Pen-test course , FINISH all the way
+		- secure my own computer
 
 
 

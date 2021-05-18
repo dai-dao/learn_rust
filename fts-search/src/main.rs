@@ -11,6 +11,9 @@ extern crate rust_stemmers;
 use rust_stemmers::{Algorithm, Stemmer};
 
 
+type Index = HashMap<String, HashSet<usize>>;
+
+
 #[derive(Debug, Deserialize, PartialEq)]
 struct Document {
     title: String,
@@ -53,6 +56,24 @@ fn search_regex(feed: Feed, term: String) -> Vec<Document> {
         }
     }
     out
+}
+
+// intersection search, need to match all tokens
+fn search_index(index: &Index, text: String) -> HashSet<usize> {
+    let mut out : HashSet<_> = HashSet::new();
+    for token in analyze(text) {
+        match index.get(&token) {
+            Some(ids) => {
+                if out.len() == 0 {
+                    out = out.union(ids).copied().collect();
+                } else {
+                    out = out.intersection(ids).copied().collect();
+                }
+            }
+            None => ()
+        }
+    }
+    return out
 }
 
 fn is_numeric(word: String) -> bool {
@@ -126,8 +147,8 @@ fn analyze(text: String) -> Vec<String> {
 }
 
 
-fn make_index(docs : Vec<Document>) -> HashMap<String, HashSet<usize>> {
-    let mut index : HashMap<String, HashSet<usize>> = HashMap::new();
+fn make_index(docs : Vec<Document>) -> Index {
+    let mut index : Index = HashMap::new();
     for doc in docs {
         let tokens = analyze(doc.text);
         for token in tokens {
@@ -141,8 +162,8 @@ fn make_index(docs : Vec<Document>) -> HashMap<String, HashSet<usize>> {
 
 
 fn main() -> io::Result<()> {
-    // let f = File::open("enwiki-latest-abstract1.xml")?;
-    let f = File::open("small.xml")?;
+    let f = File::open("enwiki-latest-abstract1.xml")?;
+    // let f = File::open("small.xml")?;
     let reader = BufReader::new(f);
     let feed = get_feed(reader).unwrap();
 
@@ -157,7 +178,11 @@ fn main() -> io::Result<()> {
     // println!("Tokens are {:?}", tokens);
 
     let index = make_index(feed.documents);
-    println!("Index {:?}", index);
+    let start = Instant::now();
+    let res = search_index(&index, "Small wild cat".to_string());
+    let duration = start.elapsed();
+    println!("Time elapsed in search: {:?}", duration);
+    println!("Search results {:?}", res);
 
     Ok(())
 }
