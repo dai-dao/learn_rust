@@ -1,5 +1,5 @@
 [package]
-name = "fts-search"
+name = "fts_search"
 version = "0.1.0"
 authors = ["Dai <ddao@ualberta.ca>"]
 edition = "2018"
