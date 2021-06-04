@@ -37,7 +37,50 @@ fn test_simple_munch() {
     for (i, inp) in inputs.iter().enumerate() {
         let tokens = lex(inp.to_string());
         let deque_tokens: VecDeque<Token> = tokens.into_iter().collect();
-        let ast : Box<ASTNode> = munch_tokens(deque_tokens);
-        assert_eq!(ast, outputs[i]);
+        let ast  = munch_tokens(deque_tokens);
+        match ast {
+            Some(out) => assert_eq!(out, outputs[i]),
+            None => assert!(false)
+        }
     }
 }
+
+
+#[test]
+fn test_fail_munch() {
+    let inputs = vec!["AND dog", "dog AND", "dog OR"];
+    for (i, inp) in inputs.iter().enumerate() {
+        let tokens = lex(inp.to_string());
+        let deque_tokens: VecDeque<Token> = tokens.into_iter().collect();
+        let ast  = munch_tokens(deque_tokens);
+        match ast {
+            Some(_out) => assert!(false),
+            None => assert!(true)
+        }
+    }
+}
+
+
+// #[test]
+// fn test_recurs_munch() {
+//     let inputs = vec!["cat AND dog OR bird".to_string()];
+//     let outputs = vec![
+//         Box::new(ASTNode::Binary(BinaryOp::Or, 
+//             Box::new(ASTNode::Name("bird".to_string())),
+//             Box::new(ASTNode::Binary(BinaryOp::And, 
+//                 Box::new(ASTNode::Name("dog".to_string())),
+//                 Box::new(ASTNode::Name("cat".to_string()))
+//             )))
+//         ),
+//     ];
+
+//     for (i, inp) in inputs.iter().enumerate() {
+//         let tokens = lex(inp.to_string());
+//         let deque_tokens: VecDeque<Token> = tokens.into_iter().collect();
+//         let ast  = munch_tokens(deque_tokens);
+//         match ast {
+//             Ok(out) => assert_eq!(out, outputs[i]),
+//             Err(_e) => assert!(false)
+//         }
+//     }
+// }
