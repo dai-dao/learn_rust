@@ -1,5 +1,3 @@
-use std::collections::VecDeque;
-use std::error;
 
 
 // Box is just pointers
@@ -29,7 +27,7 @@ pub enum BinaryOp {
 
 
 // need to go from right to left
-pub fn munch_tokens(tokens: VecDeque<Token>) -> Option<Box<ASTNode>> {
+pub fn munch_tokens(tokens: Vec<Token>) -> Option<Box<ASTNode>> {
     let mut op_token : Option<BinaryOp> = None;
     let mut invert_token = false;
     let mut right_node : Option<Box<ASTNode>> = None;
@@ -46,15 +44,30 @@ pub fn munch_tokens(tokens: VecDeque<Token>) -> Option<Box<ASTNode>> {
             Token::BinaryOp(BinaryOp::And) => {
                 match op_token {
                     // Binary op already exists, recurse further down the tree
-                    Some(_) => left_node = munch_tokens(tokens.),
+                    Some(_) => {
+                        let sub_tokens = (&tokens[..tokens.len()-2]).to_vec();
+                        left_node = munch_tokens(sub_tokens);
+                        break;
+                    }
                     None => op_token = Some(BinaryOp::And),
                 }
             }
-            Token::BinaryOp(BinaryOp::Or) => op_token = Some(BinaryOp::Or),
+            Token::BinaryOp(BinaryOp::Or) => {
+                match op_token {
+                    // Binary op already exists, recurse further down the tree
+                    Some(_) => {
+                        let sub_tokens = (&tokens[..tokens.len()-2]).to_vec();
+                        left_node = munch_tokens(sub_tokens);
+                        break;
+                    }
+                    None => op_token = Some(BinaryOp::Or),
+                }
+            }
             Token::InvertOp => invert_token = true,
             _ => (),
         }
     }
+
 
     // Assume that it can only be BinaryOp or InvertOp
     if let Some(bin_op) = op_token {
