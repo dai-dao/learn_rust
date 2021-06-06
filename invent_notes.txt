@@ -1,5 +1,7 @@
-=> boolparser
-	- make munch tokens throw errors
+=> boolparser (follow the book and study this DEEP)
+	- implement bracket munch ohh lala
+
+=> In parallel step is to contribute ElasticSearch, will really bring my skill level to industry-level tools
 
 
 
