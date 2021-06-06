@@ -29,45 +29,79 @@ pub enum BinaryOp {
 // need to go from right to left
 pub fn munch_tokens(tokens: Vec<Token>) -> Option<Box<ASTNode>> {
     let mut op_token : Option<BinaryOp> = None;
+    let mut op_token_index = 0;
     let mut invert_token = false;
     let mut right_node : Option<Box<ASTNode>> = None;
     let mut left_node : Option<Box<ASTNode>> = None;
+    let mut close_bracket = 0;
+    let mut close_bracket_index = 0;
 
-    for token in tokens.iter().rev() {
+    for (i, token) in tokens.iter().rev().enumerate() {
         match token {
+            Token::OpenBracket => {
+                // make right node the result of bracket expression, from the close bracket to open bracket
+                // move iteration cursor to after the open bracket and then continue
+                if close_bracket > 0 {
+                    close_bracket -= 1;
+                    if close_bracket == 0 {
+                        let current_index = tokens.len() - i; // exclude the bracket
+                        let sub_tokens = (&tokens[current_index..close_bracket_index]).to_vec();
+                        match right_node {
+                            Some(_) => left_node = munch_tokens(sub_tokens),
+                            None => right_node = munch_tokens(sub_tokens),
+                        }
+                    }
+                }
+            }
+            Token::CloseBracket => {
+                if close_bracket == 0 {
+                    close_bracket_index = tokens.len() - i - 1;
+                }
+                close_bracket += 1;
+            }
             Token::Name{ text } => {
-                match right_node {
-                    Some(_) => left_node = Some(Box::new(ASTNode::Name(text.to_string()))),
-                    None => right_node = Some(Box::new(ASTNode::Name(text.to_string()))), 
+                if close_bracket == 0 {
+                    match right_node {
+                        Some(_) => left_node = Some(Box::new(ASTNode::Name(text.to_string()))),
+                        None => right_node = Some(Box::new(ASTNode::Name(text.to_string()))), 
+                    }
                 }
             }
             Token::BinaryOp(BinaryOp::And) => {
-                match op_token {
-                    // Binary op already exists, recurse further down the tree
-                    Some(_) => {
-                        let sub_tokens = (&tokens[..tokens.len()-2]).to_vec();
-                        left_node = munch_tokens(sub_tokens);
-                        break;
+                if close_bracket == 0 {
+                    match op_token {
+                        // Binary op already exists, recurse further down the tree
+                        Some(_) => {
+                            let sub_tokens = (&tokens[..op_token_index]).to_vec();
+                            left_node = munch_tokens(sub_tokens);
+                            break;
+                        }
+                        None => {
+                            op_token = Some(BinaryOp::And);
+                            op_token_index = tokens.len() - i - 1;
+                        }
                     }
-                    None => op_token = Some(BinaryOp::And),
                 }
             }
             Token::BinaryOp(BinaryOp::Or) => {
-                match op_token {
-                    // Binary op already exists, recurse further down the tree
-                    Some(_) => {
-                        let sub_tokens = (&tokens[..tokens.len()-2]).to_vec();
-                        left_node = munch_tokens(sub_tokens);
-                        break;
+                if close_bracket == 0 {
+                    match op_token {
+                        // Binary op already exists, recurse further down the tree
+                        Some(_) => {
+                            let sub_tokens = (&tokens[..op_token_index]).to_vec();
+                            left_node = munch_tokens(sub_tokens);
+                            break;
+                        }
+                        None => {
+                            op_token = Some(BinaryOp::Or);
+                            op_token_index = tokens.len() - i - 1;
+                        }
                     }
-                    None => op_token = Some(BinaryOp::Or),
                 }
             }
-            Token::InvertOp => invert_token = true,
-            _ => (),
+            Token::InvertOp => if close_bracket == 0 { invert_token = true },
         }
     }
-
 
     // Assume that it can only be BinaryOp or InvertOp
     if let Some(bin_op) = op_token {
@@ -99,19 +133,21 @@ pub fn lex(query : String) -> Vec<Token> {
     let mut out : Vec<Token> = Vec::new();
     let mut builder = Vec::new();
 
-    for (i, c) in query.chars().enumerate() {
+    for c in query.chars() {
         match c {
             c if c.is_whitespace() => {
-                out.push(parse_token(&builder));
-                builder.clear();
+                if builder.len() > 0 {
+                    out.push(parse_token(&builder));
+                    builder.clear();
+                }
             }
             '(' => out.push(Token::OpenBracket),
             ')' => {
                 // last word
-                if i == query.len()-1 && builder.len() > 0 {
+                if builder.len() > 0 {
                     out.push(parse_token(&builder));
                     builder.clear();
-                }
+                } 
                 out.push(Token::CloseBracket);
             }
             _ => builder.push(c)

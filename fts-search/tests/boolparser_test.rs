@@ -3,9 +3,9 @@ pub use fts_search::boolparser::*;
 
 #[test]
 fn test_lex() {
-    let tokens = lex("cat AND dog OR bird AND (tree OR sun)".to_string());
-    assert_eq!(
-        tokens,
+    let inputs = vec!["cat AND dog OR bird AND (tree OR sun)".to_string(), 
+                      "(rain AND sun) OR bird AND (street OR people)".to_string()];
+    let outputs = vec![
         vec![
             Token::Name { text: "cat".to_string() }, 
             Token::BinaryOp(BinaryOp::And), 
@@ -18,8 +18,28 @@ fn test_lex() {
             Token::BinaryOp(BinaryOp::Or), 
             Token::Name { text: "sun".to_string() },
             Token::CloseBracket,
+        ],
+        vec![
+            Token::OpenBracket, 
+            Token::Name { text: "rain".to_string() }, 
+            Token::BinaryOp(BinaryOp::And), 
+            Token::Name { text: "sun".to_string() }, 
+            Token::CloseBracket, 
+            Token::BinaryOp(BinaryOp::Or), 
+            Token::Name { text: "bird".to_string() }, 
+            Token::BinaryOp(BinaryOp::And), 
+            Token::OpenBracket, 
+            Token::Name { text: "street".to_string() }, 
+            Token::BinaryOp(BinaryOp::Or), 
+            Token::Name { text: "people".to_string() }, 
+            Token::CloseBracket
         ]
-    );
+    ];
+
+    for (i, inp) in inputs.iter().enumerate() {
+        let tokens = lex(inp.to_string());
+        assert_eq!(tokens, outputs[i]);
+    }
 }
 
 #[test]
@@ -60,8 +80,12 @@ fn test_fail_munch() {
 
 #[test]
 fn test_recurs_munch() {
-    let inputs = vec!["cat AND dog OR bird".to_string(), 
-                      "cat AND dog OR ((NOT bird) AND mouse)".to_string()];
+    let inputs = vec![
+                      "cat AND dog OR bird".to_string(), 
+                      "cat AND dog OR (bird AND mouse)".to_string(),
+                      "rain AND sun OR bird AND (street OR people)".to_string(),
+                      "(rain AND sun) OR bird AND (street OR people)".to_string()
+                      ];
     let outputs = vec![
         Box::new(ASTNode::Binary(BinaryOp::Or, 
             Box::new(ASTNode::Binary(BinaryOp::And, 
@@ -70,7 +94,32 @@ fn test_recurs_munch() {
             )),
             Box::new(ASTNode::Name("bird".to_string())))
         ),
-        Box::new(ASTNode::Name("Not implemented".to_string()))  
+        Box::new(ASTNode::Binary(BinaryOp::Or, 
+            Box::new(ASTNode::Binary(BinaryOp::And, 
+                Box::new(ASTNode::Name("cat".to_string())),
+                Box::new(ASTNode::Name("dog".to_string())),
+            )),
+            Box::new(ASTNode::Binary(BinaryOp::And, 
+                Box::new(ASTNode::Name("bird".to_string())), 
+                Box::new(ASTNode::Name("mouse".to_string())))))),
+        Box::new(ASTNode::Binary(BinaryOp::And, 
+            Box::new(ASTNode::Binary(BinaryOp::Or, 
+                Box::new(ASTNode::Binary(BinaryOp::And, 
+                    Box::new(ASTNode::Name("rain".to_string())), 
+                    Box::new(ASTNode::Name("sun".to_string())))), 
+                Box::new(ASTNode::Name("bird".to_string())))), 
+            Box::new(ASTNode::Binary(BinaryOp::Or, 
+                Box::new(ASTNode::Name("street".to_string())), 
+                Box::new(ASTNode::Name("people".to_string())))))),
+        Box::new(ASTNode::Binary(BinaryOp::And, 
+            Box::new(ASTNode::Binary(BinaryOp::Or, 
+                Box::new(ASTNode::Binary(BinaryOp::And, 
+                    Box::new(ASTNode::Name("rain".to_string())), 
+                    Box::new(ASTNode::Name("sun".to_string())))), 
+                Box::new(ASTNode::Name("bird".to_string())))), 
+            Box::new(ASTNode::Binary(BinaryOp::Or, 
+                Box::new(ASTNode::Name("street".to_string())), 
+                Box::new(ASTNode::Name("people".to_string()))))))
     ];
 
     for (i, inp) in inputs.iter().enumerate() {
@@ -78,7 +127,9 @@ fn test_recurs_munch() {
         let ast  = munch_tokens(tokens);
         match ast {
             Some(out) => assert_eq!(out, outputs[i]),
-            None => assert!(false)
+            None => {
+                assert!(false)
+            }
         }
     }
 }
