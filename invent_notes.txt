@@ -1,19 +1,18 @@
 => boolparser (follow the book and study this DEEP)
-	- implement bracket munch ohh lala
+	- next ..., skip pointers probably
 
 => In parallel step is to contribute ElasticSearch, will really bring my skill level to industry-level tools
+	- let's get this going
 
 
 
-=> PLAN today 
-	- Get the ElasticSearch source code and build
-		- 
-	
-	- 4:30, 30 min do a programming challenge, do stats or explore whatever
-		for FUN, build new Rust things
 
-	- Do 1 hour Pen-test course , FINISH all the way
-		- secure my own computer
+=> Programming challenge, do stats or explore whatever
+	for FUN, build new Rust things
+	- https://www.lpalmieri.com/posts/2019-02-23-scientific-computing-a-rust-adventure-part-0-vectors/
+
+=> Do 1 hour Pen-test course , FINISH all the way
+	- secure my own computer
 
 
 
