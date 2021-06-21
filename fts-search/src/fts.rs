@@ -3,6 +3,7 @@ use quick_xml::de::{DeError, from_reader};
 use std::io::BufReader;
 use std::fs::File;
 use std::collections::{HashMap, HashSet};
+use crate::boolparser::*;
 
 
 extern crate rust_stemmers;
@@ -35,18 +36,8 @@ pub fn get_feed(bufread: BufReader<File>) -> Result<Feed, DeError> {
     Ok(feed)
 }
 
-// fn search(feed: Feed, term: String) -> Vec<Document> {
-//     let mut out = Vec::new();
-//     for doc in feed.documents {
-//         if doc.text.contains(&term) {
-//             out.push(doc);
-//         }
-//     }
-//     out
-// }
-
-// intersection search, need to match all tokens
-pub fn search_index(index: &Index, text: String) -> HashSet<usize> {
+// intersection search, need to match all tokens in a phrase
+pub fn search_phrase_index(index: &Index, text: String) -> HashSet<usize> {
     let mut out : HashSet<_> = HashSet::new();
     for token in analyze(text) {
         match index.get(&token) {
@@ -63,14 +54,30 @@ pub fn search_index(index: &Index, text: String) -> HashSet<usize> {
     return out
 }
 
-// fn is_numeric(word: String) -> bool {
-//     for w in word.chars() {
-//         if !w.is_numeric() {
-//             return false;
-//         }
-//     }
-//     return true;
-// }
+// boolean search
+pub fn search_bool_index(index: &Index, text: String) -> HashSet<usize> {
+    let mut out : HashSet<_> = HashSet::new();
+    let tokens = lex(text);
+    let ast = munch_tokens(tokens);
+
+    // recurse AST tree and build the output postings
+    match ast {
+        Some(tbox) => {
+            match *tbox {
+                ASTNode::Binary(BinaryOp::And, left, right) => println!("catch AND"),
+                ASTNode::Binary(BinaryOp::Or, left, right) => println!("catch OR"),
+                _ => println!("nothing")
+            }
+
+        //    println!("Box {:?}", tbox) 
+        }
+        // Some(BinaryOp::Or) => println!("Catch OR"),
+        _ => return out
+    }
+
+
+    return out
+}
 
 fn is_word(word: String) -> bool {
     for w in word.chars() {
