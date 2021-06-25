@@ -13,6 +13,12 @@ use rust_stemmers::{Algorithm, Stemmer};
 type Index = HashMap<String, HashSet<usize>>;
 
 
+#[derive(Debug)]
+pub struct FTS {
+    pub index: Index,
+    pub all_ids: HashSet<usize>
+}
+
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct Document {
     title: String,
@@ -36,47 +42,76 @@ pub fn get_feed(bufread: BufReader<File>) -> Result<Feed, DeError> {
     Ok(feed)
 }
 
-// intersection search, need to match all tokens in a phrase
-pub fn search_phrase_index(index: &Index, text: String) -> HashSet<usize> {
-    let mut out : HashSet<_> = HashSet::new();
-    for token in analyze(text) {
-        match index.get(&token) {
-            Some(ids) => {
-                if out.len() == 0 {
-                    out = out.union(ids).copied().collect();
-                } else {
-                    out = out.intersection(ids).copied().collect();
+impl FTS {
+
+    fn search_bool(&self, node: ASTNode) -> HashSet<usize> {
+        match node {
+            ASTNode::Binary(BinaryOp::And, left, right) => {   
+                return self.search_bool(*left).intersection(&self.search_bool(*right)).copied().collect()
+            }
+            ASTNode::Binary(BinaryOp::Or, left, right) => {
+                return self.search_bool(*left).union(&self.search_bool(*right)).copied().collect()
+            }
+            ASTNode::Invert(node) => {
+                let ids = self.search_bool(*node);
+                return self.all_ids.difference(&ids).copied().collect();
+            }
+            ASTNode::Name(name) => {
+                let token = &analyze(name)[0];
+                match &self.index.get(token) {
+                    Some(ids) => {
+                        return HashSet::new().union(ids).copied().collect()
+                    }
+                    None => return HashSet::new()
                 }
             }
-            None => ()
         }
     }
-    return out
+    
+    // boolean search
+    pub fn search_bool_index(&self, text: String) -> HashSet<usize> {
+        let tokens = lex(text);
+        let ast = munch_tokens(tokens);
+        // recurse AST tree and build the output postings
+        match ast {
+            Some(tbox) => return self.search_bool(*tbox),
+            _ => return HashSet::new()
+        }
+    }
+
+    // intersection search, need to match all tokens in a phrase
+    pub fn search_phrase_index(&self, text: String) -> HashSet<usize> {
+        let mut out : HashSet<_> = HashSet::new();
+        for token in analyze(text) {
+            match self.index.get(&token) {
+                Some(ids) => {
+                    if out.len() == 0 {
+                        out = out.union(ids).copied().collect();
+                    } else {
+                        out = out.intersection(ids).copied().collect();
+                    }
+                }
+                None => ()
+            }
+        }
+        return out
+    }
 }
 
-// boolean search
-pub fn search_bool_index(index: &Index, text: String) -> HashSet<usize> {
-    let mut out : HashSet<_> = HashSet::new();
-    let tokens = lex(text);
-    let ast = munch_tokens(tokens);
-
-    // recurse AST tree and build the output postings
-    match ast {
-        Some(tbox) => {
-            match *tbox {
-                ASTNode::Binary(BinaryOp::And, left, right) => println!("catch AND"),
-                ASTNode::Binary(BinaryOp::Or, left, right) => println!("catch OR"),
-                _ => println!("nothing")
-            }
-
-        //    println!("Box {:?}", tbox) 
+pub fn make_index(docs : Vec<Document>) -> FTS {
+    let mut index : Index = HashMap::new();
+    let mut all_ids = HashSet::new();
+    for doc in docs {
+        all_ids.insert(doc.id.unwrap());
+        let tokens = analyze(doc.text);
+        for token in tokens {
+            // cloning to own the value
+            index.entry(token.clone()).or_insert(HashSet::new());
+            index.get_mut(&token).unwrap().insert(doc.id.unwrap());
         }
-        // Some(BinaryOp::Or) => println!("Catch OR"),
-        _ => return out
     }
-
-
-    return out
+    let fts = FTS { index, all_ids };
+    return fts
 }
 
 fn is_word(word: String) -> bool {
@@ -138,18 +173,4 @@ fn analyze(text: String) -> Vec<String> {
     tokens = stopword_filter(tokens);
     tokens = stemmer_filter(tokens);
     return tokens
-}
-
-
-pub fn make_index(docs : Vec<Document>) -> Index {
-    let mut index : Index = HashMap::new();
-    for doc in docs {
-        let tokens = analyze(doc.text);
-        for token in tokens {
-            // cloning to own the value
-            index.entry(token.clone()).or_insert(HashSet::new());
-            index.get_mut(&token).unwrap().insert(doc.id.unwrap());
-        }
-    }
-    return index
 }

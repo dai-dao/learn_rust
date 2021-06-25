@@ -11,8 +11,8 @@ fn test_search() -> io::Result<()>  {
     let reader = BufReader::new(f);
     let feed = get_feed(reader).unwrap();
     // 
-    let index = make_index(feed.documents);
-    let res = search_phrase_index(&index, "solar political radiation reflection philosophy movement".to_string());
+    let fts = make_index(feed.documents);
+    let res = fts.search_phrase_index("solar political radiation reflection philosophy movement".to_string());
     assert!(res.len() > 0);
     //
     Ok(())
@@ -25,8 +25,8 @@ fn test_bool_search() -> io::Result<()> {
     let reader = BufReader::new(f);
     let feed = get_feed(reader).unwrap();
     // 
-    let index = make_index(feed.documents);
-    let res = search_bool_index(&index, "solar OR movement".to_string());
+    let fts = make_index(feed.documents);
+    let res = fts.search_bool_index("solar OR movement".to_string());
     assert!(res.len() == 0);
     //
     Ok(())

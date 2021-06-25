@@ -12,9 +12,9 @@ fn main() -> io::Result<()> {
     let reader = BufReader::new(f);
     let feed = get_feed(reader).unwrap();
     // 
-    let index = make_index(feed.documents);
+    let fts = make_index(feed.documents);
     let start = Instant::now();
-    let res = search_phrase_index(&index, "Small wild cat".to_string());
+    let res = fts.search_phrase_index("Small wild cat".to_string());
     let duration = start.elapsed();
     println!("Time elapsed in search: {:?}", duration);
     println!("Search results {:?}", res);
