@@ -26,8 +26,14 @@ fn test_bool_search() -> io::Result<()> {
     let feed = get_feed(reader).unwrap();
     // 
     let fts = make_index(feed.documents);
-    let res = fts.search_bool_index("solar OR movement".to_string());
-    assert!(res.len() == 0);
+    let res1 = fts.search_bool_index("reflection".to_string());
+    assert!(res1.len() == 1);
+    let res2 = fts.search_bool_index("movement".to_string());
+    assert!(res2.len() == 1);
+    let res3 = fts.search_bool_index("reflection OR movement".to_string());
+    assert!(res3.len() == 2);
+    let res4 = fts.search_bool_index("reflection AND movement".to_string());
+    assert!(res4.len() == 0);
     //
     Ok(())
 }

@@ -60,6 +60,9 @@ pub fn munch_tokens(tokens: Vec<Token>) -> Option<Box<ASTNode>> {
                 close_bracket += 1;
             }
             Token::Name{ text } => {
+                // in case just one token
+                // if 
+
                 if close_bracket == 0 {
                     match right_node {
                         Some(_) => left_node = Some(Box::new(ASTNode::Name(text.to_string()))),
@@ -113,7 +116,7 @@ pub fn munch_tokens(tokens: Vec<Token>) -> Option<Box<ASTNode>> {
     } else if invert_token {
         return Some(Box::new(ASTNode::Invert(right_node.unwrap())))
     } else {
-        return None
+        return right_node
     }
 }
 

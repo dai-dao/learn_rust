@@ -1,13 +1,10 @@
-=> boolparser (follow the book and study this DEEP)
-	- check the test case for bool parser and done
+=> next step for FTS? read the book
 
 
-=> In parallel step is to contribute ElasticSearch, will really bring my skill level to industry-level tools
-	- let's get this going
+=> In parallel step is to contribute ElasticSearch
 
 
 
 
 => Programming challenge, do stats or explore whatever
-	for FUN, build new Rust things
 	- https://www.lpalmieri.com/posts/2019-02-23-scientific-computing-a-rust-adventure-part-0-vectors/
